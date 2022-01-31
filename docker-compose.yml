@@ -1,0 +1,15 @@
+version: '3'
+services:
+  db:
+    image: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: ecogas
+      MYSQL_USER: ecogas_admin
+      MYSQL_PASSWORD: password
+      #volumes:
+#      - "crmdata:/var/lib/postgresql/data"
+#volumes:
+#  crmdata:
