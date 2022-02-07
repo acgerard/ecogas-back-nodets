@@ -12,11 +12,10 @@ app.use(express.json())
 app.use(cors());
 const port: number = 8066
 
-// TODO https ??
 // use basic HTTP auth to secure the api
 app.use(basicAuth);
 
-app.get('/crm/health', async (req: Request, res: Response) => {
+app.get('/ecogas/health', async (req: Request, res: Response) => {
     res.send('Hello world!')
 })
 
