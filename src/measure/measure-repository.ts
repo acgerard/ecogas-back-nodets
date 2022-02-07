@@ -14,10 +14,10 @@ export type Measure = {
 
 export async function createMeasure(stationId: number, measureData: any): Promise<Measure> {
     const {date, ...measures} = measureData
-    const res = await query('INSERT INTO station_measure (station_id, date, measures) VALUES (?, ?, ?) RETURNING station_id, date, measures', [stationId, date, measures])
-    if (res.rowCount > 0) {
-        const result = res[0]
-        return {stationId: result.station_id, date: result.date, measures: result.measures}
+    const res = await query('INSERT INTO station_measure (station_id, date, measures) VALUES (?, ?, ?)', [stationId, date, JSON.stringify(measures)])
+    if (res.affectedRows > 0) {
+        // TODO check RETURNING in statement to send the data inserted
+        return {stationId: stationId, date: date, measures: measures}
     } else {
         throw Error('Error creating measure')
     }

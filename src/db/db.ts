@@ -26,6 +26,7 @@ export async function initDB() {
     console.log('Creating user table')
     await query('create table if not exists user (email varchar(100) primary key, password varchar(512) not null)', [])
     console.log('create station_measure table')
+    // TODO timestamp without timezone
     await query('create table if not exists station_measure (station_id int not null, date timestamp not null, measures JSON not null)', [])
 
 }

@@ -19,7 +19,7 @@ export async function getUser(login: string, password: string) {
     // query the DB
     const res = await query('SELECT email FROM user WHERE email=? and password=?', [login, hashedPwd])
 
-    if (res.rowCount > 0) {
+    if (res.length > 0) {
         return res[0].email
     } else {
         throw new NotFound('user', login)

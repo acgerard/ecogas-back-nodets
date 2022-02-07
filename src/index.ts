@@ -5,7 +5,7 @@ import {errorHandler} from "./helpers/error-handler";
 import {basicAuth} from './helpers/basic-auth';
 import {create, resetPassword, update} from "./user/user-controller";
 import {createUser, isUser} from "./user/user-repository";
-import {createMeasure, getMeasures} from "./measure/measure-repository";
+import {create as createMeasure, getAll as getMeasures} from "./measure/measure-controller";
 
 const app: Application = express()
 app.use(express.json())
