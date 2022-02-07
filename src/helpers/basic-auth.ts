@@ -27,6 +27,7 @@ export async function basicAuth(req: Request, res: Response, next: NextFunction)
 
         next();
     } catch (e) {
+        console.log(e)
         return res.status(401).json({ message: 'Error authenticating' });
     }
 
