@@ -5,7 +5,7 @@ import {errorHandler} from "./helpers/error-handler";
 import {basicAuth} from './helpers/basic-auth';
 import {create, resetPassword, update} from "./user/user-controller";
 import {createUser, isUser} from "./user/user-repository";
-import {create as createMeasure, getAll as getMeasures} from "./measure/measure-controller";
+import {create as createMeasure, getAll as getMeasures, createStation} from "./measure/measure-controller";
 
 const app: Application = express()
 app.use(express.json())
@@ -25,6 +25,9 @@ app.get('/ecogas/health', async (req: Request, res: Response) => {
 app.post('/ecogas/users', create)
 app.put('/ecogas/users/:email', update)
 app.put('/ecogas/users/:email/reset', resetPassword)
+
+// routes STATION
+app.post('/ecogas/stations/:id', createStation)
 
 // routes MEASURES
 app.post('/ecogas/stations/:id/measures', createMeasure)
