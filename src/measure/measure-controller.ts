@@ -3,7 +3,6 @@ import {createMeasure, createStation as createStationRepo, getMeasures} from "./
 import {execute} from "../helpers/express-helper";
 
 async function withStationId(req: Request, res: Response, next: NextFunction, callback: (stationId: number) => void) {
-    console.log("Request", req)
     await execute(next, async () => {
         const stationId = Number(req.params.id)
         if (isNaN(stationId)) {
