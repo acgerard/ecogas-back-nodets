@@ -1,5 +1,14 @@
 import {query} from "../db/db";
 
+export enum MeasureGranularity {
+    SECOND = 'second',
+    MINUTE = 'minute',
+    HOUR = 'hour',
+    DAY = 'day',
+    MONTH = 'month',
+    YEAR = 'year'
+}
+
 export type Measure = {
     stationId: number,
     date: number,
@@ -23,12 +32,34 @@ export async function createMeasure(stationId: number, measureData: any): Promis
     }
 }
 
-// TODO add from/to
-export async function getMeasures(stationId: number): Promise<Measure[]> {
-    const res = await query(`SELECT station_id, date, measures FROM station_measure_${stationId}`, [])
-    return res.map((row: any) => {
-        return {stationId: row.station_id, date: row.date, measures: JSON.parse(row.measures)}
-    })
+export async function getMeasures(stationId: number, granularity: MeasureGranularity, startDate: number): Promise<Measure[]> {
+    let groupBy = ''
+    switch (granularity) {
+        case MeasureGranularity.SECOND:
+            break
+        case MeasureGranularity.MINUTE:
+            groupBy = 'GROUP BY YEAR(date), MONTH(date), DAY(date), HOUR(date), MINUTE(date)'
+            break
+        case MeasureGranularity.HOUR:
+            groupBy = 'GROUP BY YEAR(date), MONTH(date), DAY(date), HOUR(date)'
+            break
+        case MeasureGranularity.DAY:
+            groupBy = 'GROUP BY YEAR(date), MONTH(date), DAY(date)'
+            break
+        case MeasureGranularity.MONTH:
+            groupBy = 'GROUP BY YEAR(date), MONTH(date)'
+            break
+        case MeasureGranularity.YEAR:
+            groupBy = 'GROUP BY YEAR(date)'
+            break
+    }
+
+    let sqlQuery = `SELECT date, measures FROM station_measure_${stationId} sm WHERE sm.date > FROM_UNIXTIME(?) `
+    if (!!groupBy) {
+        sqlQuery = sqlQuery + ` AND sm.date IN (SELECT MAX(date) from station_measure_${stationId} ${groupBy})`
+    }
+
+    return await query( sqlQuery, [startDate])
 }
 
 export async function createStation(stationId: number) {

@@ -32,6 +32,7 @@ app.post('/ecogas/stations/:id', createStation)
 
 // routes MEASURES
 app.post('/ecogas/stations/:id/measures', createMeasure)
+// with query parameters : startdate & granularity
 app.get('/ecogas/stations/:id/measures', getMeasures)
 
 
