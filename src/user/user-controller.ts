@@ -6,7 +6,7 @@ import {getUser, updatePassword, resetPassword as resetPasswordDb, createUser} f
 export async function authenticate(req: Request, res: Response, next: NextFunction) {
     await execute(next, async () => {
         const result = await getUser(req.body.email, req.body.password)
-        res.send(result)
+        res.send({email: result})
     })
 }
 
