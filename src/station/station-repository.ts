@@ -32,11 +32,5 @@ export async function getUserStations(userId: number, admin: boolean): Promise<S
         // admin, get all stations
         sql = 'SELECT id, name FROM station'
     }
-    const res = await query(sql, [userId])
-
-    if (res.length > 0) {
-        return res[0]
-    } else {
-        return []
-    }
+    return await query(sql, [userId])
 }

@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {execute} from "./express-helper";
+import {UserProfile} from "../user/user-repository";
 
 export async function withStationId(req: Request, res: Response, next: NextFunction, callback: (stationId: number) => void) {
     await execute(next, async () => {

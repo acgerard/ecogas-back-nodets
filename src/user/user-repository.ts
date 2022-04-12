@@ -10,6 +10,11 @@ export type User = {
     name: string
     profile: UserProfile
 }
+export enum UserProfile {
+    ADMIN= 'ADMIN',
+    STATION = 'STATION',
+    CUSTOMER = 'CUSTOMER'
+}
 
 export async function isUser(email: string) {
     // query the DB
@@ -30,6 +35,21 @@ export async function getUser(email: string, password: string): Promise<User> {
     } else {
         throw new NotFound('user', email)
     }
+}
+
+export async function getAllUsers(): Promise<({ stations: number[] } & User)[]> {
+    // query the DB
+    const results = await query('SELECT id, email, name, profile, station_id FROM user LEFT JOIN user_station ON user_station.user_id = user.id', [])
+    const usersById: { [id: number]: { stations: number[] } & User } = {}
+    results.map((res: { id: number, email: string, name: string, profile: UserProfile, station_id?: number }) => {
+        if (!usersById[res.id]) {
+            usersById[res.id] = {id: res.id, email: res.email, name: res.name, profile: res.profile, stations: []}
+        }
+        if(!!res.station_id) {
+            usersById[res.id].stations.push(res.station_id)
+        }
+    })
+    return Object.values(usersById)
 }
 
 export async function updatePassword(email: string, newPassword: string) {
@@ -58,7 +78,7 @@ export async function createUser(email: string, name?: string, password?: string
     if (res.length <= 0) {
         throw Error('Error creating user ' + email)
     } else {
-        return pwd
+        return getUser(email, pwd)
     }
 }
 

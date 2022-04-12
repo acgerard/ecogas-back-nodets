@@ -3,7 +3,7 @@ import cors from 'cors'
 import {closeDB, initDB} from "./db/db";
 import {errorHandler} from "./helpers/error-handler";
 import {basicAuth} from './helpers/basic-auth';
-import {authenticate, create, resetPassword, update} from "./user/user-controller";
+import {authenticate, create, getUsers, resetPassword, update} from "./user/user-controller";
 import {createUser, isUser} from "./user/user-repository";
 import {create as createMeasure, getAll as getMeasures} from "./measure/measure-controller";
 import {createStation, createUserStation, deleteUserStation, getUserStation} from './station/station-controller';
@@ -25,6 +25,7 @@ app.get('/ecogas/health', async (req: Request, res: Response) => {
 // routes USER
 app.post('/ecogas/users/authenticate', authenticate)
 app.post('/ecogas/users', create)
+app.get('/ecogas/users', getUsers)
 app.put('/ecogas/users/:id', update)
 app.put('/ecogas/users/:id/reset', resetPassword)
 // user station

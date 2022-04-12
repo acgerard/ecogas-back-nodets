@@ -15,7 +15,8 @@ export async function createStation(req: Request, res: Response, next: NextFunct
         } else {
             try {
                 await createStationRepo(stationId, req.body.name)
-                res.sendStatus(201)
+                res.status(201)
+                res.send({id: stationId, name: req.body.name})
             } catch (e: any) {
                 res.status(400)
                 res.send({message: e.message})
