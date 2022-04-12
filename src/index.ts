@@ -5,7 +5,8 @@ import {errorHandler} from "./helpers/error-handler";
 import {basicAuth} from './helpers/basic-auth';
 import {authenticate, create, resetPassword, update} from "./user/user-controller";
 import {createUser, isUser} from "./user/user-repository";
-import {create as createMeasure, getAll as getMeasures, createStation} from "./measure/measure-controller";
+import {create as createMeasure, getAll as getMeasures} from "./measure/measure-controller";
+import {createStation, createUserStation, deleteUserStation, getUserStation} from './station/station-controller';
 
 const app: Application = express()
 app.use(express.json())
@@ -24,11 +25,17 @@ app.get('/ecogas/health', async (req: Request, res: Response) => {
 // routes USER
 app.post('/ecogas/users/authenticate', authenticate)
 app.post('/ecogas/users', create)
-app.put('/ecogas/users/:email', update)
-app.put('/ecogas/users/:email/reset', resetPassword)
+app.put('/ecogas/users/:id', update)
+app.put('/ecogas/users/:id/reset', resetPassword)
+// user station
+app.post('/ecogas/users/:userId/stations/:id', createUserStation)
+app.delete('/ecogas/users/:userId/stations/:id', deleteUserStation)
+
 
 // routes STATION
 app.post('/ecogas/stations/:id', createStation)
+app.get('/ecogas/stations', getUserStation)
+
 
 // routes MEASURES
 app.post('/ecogas/stations/:id/measures', createMeasure)
@@ -45,7 +52,7 @@ const server = app.listen(port, async function () {
         console.log("Checking admin user...")
 
         if(!await isUser(adminLogin)) {
-            await createUser(adminLogin, 'changeit')
+            await createUser(adminLogin, 'admin', 'changeit')
             console.log(adminLogin + " user created")
         }
     } catch (e) {

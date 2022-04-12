@@ -24,7 +24,18 @@ export async function query(
 
 export async function initDB() {
     console.log('Creating user table')
-    await query('create table if not exists user (email varchar(100) primary key, password varchar(512) not null)', [])
+    await query("create table if not exists user (id serial primary key, email varchar(100) unique, name varchar(100), password varchar(512) not null, profile varchar(20) not null default 'CUSTOMER')", [])
+    console.log('Creating station table')
+    await query('create table if not exists station (id int primary key, name varchar(100))', [])
+    console.log('Creating user_station table')
+    await query('' +
+        'create table if not exists user_station (user_id bigint unsigned, station_id int, ' +
+        'foreign key user_id (user_id) references user(id), ' +
+        'foreign key station_id (station_id) references station(id)' +
+        ')'
+        , [])
+
+
 }
 
 export async function closeDB() {

@@ -12,21 +12,16 @@ export enum MeasureGranularity {
 export type Measure = {
     stationId: number,
     date: number,
-    measures: any,
+    v_tank: number | null,
+    v_diesel: number | null,
+    v_ecogas: number | null,
 }
 
-// flowDiesel: number,
-// flowEcogas: number,
-// temperature: number,
-// tankVolume: number
 
-
-export async function createMeasure(stationId: number, measureData: any): Promise<Measure> {
-    const {date, ...measures} = measureData
-    const res = await query(`INSERT INTO station_measure_${stationId} (station_id, date, measures) VALUES (?, FROM_UNIXTIME(?), ?)`, [stationId, date, JSON.stringify(measures)])
+export async function createMeasure(stationId: number, measureData: {date: number, v_tank: number|null, v_diesel: number |null, v_ecogas:number|null} ): Promise<Measure> {
+    const res = await query(`INSERT INTO station_measure_${stationId} (station_id, date, v_tank, v_diesel, v_ecogas) VALUES (?, FROM_UNIXTIME(?), ?, ?, ?)`, [stationId, measureData.date, measureData.v_tank, measureData.v_diesel, measureData.v_ecogas])
     if (res.affectedRows > 0) {
-        // TODO check RETURNING in statement to send the data inserted
-        return {stationId: stationId, date: date, measures: measures}
+        return {stationId: stationId, ...measureData}
     } else {
         throw Error('Error creating measure')
     }
@@ -54,14 +49,10 @@ export async function getMeasures(stationId: number, granularity: MeasureGranula
             break
     }
 
-    let sqlQuery = `SELECT date, measures FROM station_measure_${stationId} sm WHERE sm.date > FROM_UNIXTIME(?) `
+    let sqlQuery = `SELECT date, v_tank, v_diesel, v_ecogas FROM station_measure_${stationId} sm WHERE sm.date > FROM_UNIXTIME(?) `
     if (!!groupBy) {
         sqlQuery = sqlQuery + ` AND sm.date IN (SELECT MAX(date) from station_measure_${stationId} ${groupBy})`
     }
 
-    return await query( sqlQuery, [startDate])
-}
-
-export async function createStation(stationId: number) {
-    return await query(`create table if not exists station_measure_${stationId} (station_id int not null, date timestamp not null, measures JSON not null)`, [])
+    return await query(sqlQuery, [startDate])
 }

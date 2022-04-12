@@ -17,13 +17,14 @@ export async function basicAuth(req: Request, res: Response, next: NextFunction)
         // verify auth credentials
         const base64Credentials =  req.headers.authorization.split(' ')[1];
         const credentials = Buffer.from(base64Credentials, 'base64').toString('ascii');
-        const [username, password] = credentials.split(':');
-        const user = await getUser(username, password);
-        if (!user) {
+        const [email, password] = credentials.split(':');
+        const userId = await getUser(email, password);
+        if (!userId) {
             return res.status(401).json({ message: 'Invalid Authentication Credentials' });
         }
         // set user in request
-        req.user = user
+        req.userId = userId.id
+        req.profile = userId.profile
 
         next();
     } catch (e) {
