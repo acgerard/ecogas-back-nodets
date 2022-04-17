@@ -9,7 +9,7 @@ export async function withStationId(req: Request, res: Response, next: NextFunct
             // station ID is not a number
             res.status(400)
         } else {
-            callback(stationId)
+            return callback(stationId)
         }
     })
 }

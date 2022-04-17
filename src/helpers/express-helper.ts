@@ -2,8 +2,9 @@ import {NextFunction} from "express";
 
 export async function execute(next: NextFunction, callback: () => void) {
     try {
-        await callback()
+        return await callback()
     } catch (e: any) {
+        console.log("ERROR!!!")
         next(e)
     }
 }
