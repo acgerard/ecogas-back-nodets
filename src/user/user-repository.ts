@@ -52,11 +52,27 @@ export async function getAllUsers(): Promise<({ stations: number[] } & User)[]> 
     return Object.values(usersById)
 }
 
-export async function updatePassword(email: string, newPassword: string) {
-    const hashedPwd = getHashedPwd(newPassword)
-    const res = await query('UPDATE user SET password=? WHERE email=?', [hashedPwd, email])
-    if (res.length <= 0) {
-        throw new NotFound('user', email)
+export async function updateUser({id, email, name, password, profile}:{id: number, email?: string, name?: string, password?: string, profile?: string}) {
+    if(!!password) {
+        const hashedPwd = getHashedPwd(password)
+        await query('UPDATE user SET password=? WHERE id=?', [hashedPwd, id])
+    }
+    if(!!email) {
+        await query('UPDATE user SET email=? WHERE id=?', [email, id])
+    }
+    if(!!name) {
+        await query('UPDATE user SET name=? WHERE id=?', [name, id])
+    }
+    if(!!profile) {
+        await query('UPDATE user SET profile=? WHERE id=?', [profile, id])
+    }
+
+    const res = await query('SELECT id, email, name, profile FROM user WHERE id=?', [id])
+
+    if (res.length > 0) {
+        return res[0]
+    } else {
+        throw new NotFound('user', id.toString())
     }
 }
 

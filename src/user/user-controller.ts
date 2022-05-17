@@ -1,6 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {execute} from "../helpers/express-helper";
-import {getUser, updatePassword, resetPassword as resetPasswordDb, createUser, getAllUsers} from "./user-repository";
+import {getUser, updateUser, resetPassword as resetPasswordDb, createUser, getAllUsers} from "./user-repository";
 import {isAdmin} from "../helpers/helper";
 
 
@@ -12,12 +12,13 @@ export async function authenticate(req: Request, res: Response, next: NextFuncti
 }
 
 export async function update(req: Request, res: Response, next: NextFunction) {
-    if (req.userId === Number(req.params.id)) {
+    const userId = Number(req.params.id);
+    if (req.userId === userId || isAdmin(req)) {
         await execute(next, async () => {
-            const result = await updatePassword(req.params.email, req.body.password)
-            res.send(result)
+            const user = await updateUser({id: userId, ...req.body})
+            res.send(user)
         })
-    } else throw 'You can only update your own password'
+    } else throw 'Only admin can update other users'
 }
 
 export async function create(req: Request, res: Response, next: NextFunction) {
